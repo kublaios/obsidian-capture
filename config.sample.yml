@@ -1,0 +1,115 @@
+# Obsidian Capture - Sample Configuration
+# Save as config.yaml and customize for your needs
+
+# Vault path (OPTIONAL)
+# If not specified, uses --vault argument or current directory as fallback
+vault: "~/Documents/MyVault"     # Path to your Obsidian vault
+
+# CSS selectors for content extraction (REQUIRED)
+# The tool tries these selectors in order until it finds content
+selectors:
+  - "article"                    # Semantic article element
+  - "main"                       # Main content area
+  - '[role="main"]'              # ARIA main role
+  - ".content"                   # Common content class
+  - ".post-content"              # Blog post content
+  - ".entry-content"             # Entry/article content  
+  - ".article-content"           # Article-specific content
+  - ".page-content"              # Page content wrapper
+  - "body"                       # Fallback to entire body
+
+# Content quality settings
+min_content_chars: 80            # Minimum characters required for valid content
+overwrite: false                 # Whether to overwrite existing files
+
+# File organization
+subfolder: "web-articles"        # Subfolder within vault for captured content
+
+# Metadata and tags
+tags:
+  - "web"                        # Add to all captured articles
+  - "archived"
+  - "external-content"
+
+# Optional metadata fields
+summary: null                    # Optional summary text (auto-generated if null)
+archived_at: null               # Optional archive timestamp (auto-generated if null)
+
+# Exclude fields from front matter (OPTIONAL)
+# Useful to keep front matter clean and focused  
+exclude_fields:
+  - "canonical_url"              # Remove canonical URL from front matter
+  - "keywords"                   # Remove SEO keywords from front matter
+  - "selector"                   # Remove CSS selector from front matter
+
+# Exclusion selectors - Remove unwanted elements (NEW FEATURE)
+exclusion_selectors:
+  - "footer"                     # Remove all footer elements
+  - "nav"                        # Remove navigation menus
+  - ".advertisement"             # Remove ads by class
+  - ".subscribe-offer"           # Remove subscription prompts
+  - ".social-share"              # Remove social sharing widgets
+  - "#comments"                  # Remove comments section
+  - ".sidebar"                   # Remove sidebar content
+  - ".related-posts"             # Remove related posts sections
+  - ".author-bio"                # Remove author biography boxes
+  - ".newsletter-signup"         # Remove newsletter signup forms
+
+# Custom metadata fields (optional)
+# These will be added to the frontmatter of generated files
+author: null                     # Article author (if available)
+publication_date: null           # Publication date (if available)
+source_domain: null              # Source website domain (auto-detected)
+
+# Example configurations for different use cases:
+
+# Minimal configuration:
+# selectors:
+#   - "article"
+#   - "main" 
+#   - "body"
+
+# News articles configuration:
+# selectors:
+#   - "article"
+#   - ".article-body"
+#   - ".story-content"
+#   - "main"
+# exclusion_selectors:
+#   - ".advertisement"
+#   - ".related-articles"
+#   - ".social-share"
+#   - "footer"
+# tags:
+#   - "news"
+#   - "current-events"
+
+# Blog posts configuration:
+# selectors:
+#   - ".post-content"
+#   - ".entry-content"
+#   - "article"
+#   - "main"
+# exclusion_selectors:
+#   - ".author-bio"
+#   - ".related-posts"
+#   - ".comments"
+#   - ".sidebar"
+# tags:
+#   - "blog"
+#   - "personal"
+
+# Academic articles configuration:
+# selectors:
+#   - ".article-content"
+#   - ".paper-content"
+#   - "main"
+#   - "article"
+# min_content_chars: 500
+# exclusion_selectors:
+#   - ".references"
+#   - ".citations"
+#   - ".sidebar"
+# tags:
+#   - "academic"
+#   - "research"
