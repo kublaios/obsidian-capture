@@ -30,8 +30,15 @@ Download pre-built binaries from the [GitHub Releases](https://github.com/kublai
 Binary executables are standalone and don't require Python installation.
 
 ### Python Package Install
+
+Install directly from GitHub:
 ```bash
-pip install obsidian-capture
+pip install git+https://github.com/kublaios/obsidian-capture.git
+```
+
+Or install from a specific release:
+```bash
+pip install https://github.com/kublaios/obsidian-capture/releases/download/v0.3.0/obsidian_capture-0.3.0-py3-none-any.whl
 ```
 
 ### Development Install
