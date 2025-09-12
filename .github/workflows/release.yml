@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create release for'
+        required: true
+        type: string
+
+jobs:
+  build-python:
+    name: Build Python packages
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build hatch
+
+    - name: Build source distribution and wheel
+      run: |
+        python -m build
+
+    - name: Upload Python packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-packages
+        path: dist/
+
+  build-binaries:
+    name: Build binaries
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+          - os: macos-latest
+            platform: macos
+            arch: x86_64
+          - os: macos-latest
+            platform: macos
+            arch: arm64
+            python-arch: arm64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        architecture: ${{ matrix.python-arch || 'x64' }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        # Install dependencies from requirements file
+        pip install -r requirements.txt
+        # Install the package
+        pip install -e .
+
+    - name: Build binary (Linux/macOS)
+      if: matrix.platform != 'windows'
+      run: |
+        pyinstaller --onefile --name obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} \
+          --hidden-import obsidian_capture.capture \
+          --hidden-import obsidian_capture.config \
+          --hidden-import obsidian_capture.convert \
+          --hidden-import obsidian_capture.errors \
+          --hidden-import obsidian_capture.exclude \
+          --hidden-import obsidian_capture.extract \
+          --hidden-import obsidian_capture.fetch \
+          --hidden-import obsidian_capture.logging \
+          --hidden-import obsidian_capture.metadata \
+          --hidden-import obsidian_capture.naming \
+          --hidden-import obsidian_capture.report \
+          --hidden-import obsidian_capture.timing \
+          --hidden-import obsidian_capture.write \
+          src/obsidian_capture/cli.py
+
+    - name: Build binary (Windows)
+      if: matrix.platform == 'windows'
+      run: |
+        pyinstaller --onefile --name obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} --hidden-import obsidian_capture.capture --hidden-import obsidian_capture.config --hidden-import obsidian_capture.convert --hidden-import obsidian_capture.errors --hidden-import obsidian_capture.exclude --hidden-import obsidian_capture.extract --hidden-import obsidian_capture.fetch --hidden-import obsidian_capture.logging --hidden-import obsidian_capture.metadata --hidden-import obsidian_capture.naming --hidden-import obsidian_capture.report --hidden-import obsidian_capture.timing --hidden-import obsidian_capture.write src/obsidian_capture/cli.py
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary-${{ matrix.platform }}-${{ matrix.arch }}
+        path: dist/obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }}*
+
+  create-release:
+    name: Create Release
+    needs: [build-python, build-binaries]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set release tag
+      id: tag
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts/
+
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.tag.outputs.tag }}
+        name: Release ${{ steps.tag.outputs.tag }}
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        files: |
+          artifacts/python-packages/*
+          artifacts/binary-*/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
