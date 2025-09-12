@@ -208,6 +208,14 @@ obsidian-capture /path/to/file.html --vault ~/vault
 # With configuration file
 obsidian-capture /path/to/file.html --config config.yml
 
+# Minimal command using default config (~/.obsidian-capture.yml)
+# Uses vault path defined in config file, no optional arguments needed
+obsidian-capture /path/to/file.html
+
+# Remote URL capture (may not work in restricted network environments)
+# Include for completeness - prefer local HTML files for development testing
+obsidian-capture https://example.com/article --vault ~/vault --timeout 30
+
 # Dry run preview
 obsidian-capture /path/to/file.html --vault ~/vault --dry
 
