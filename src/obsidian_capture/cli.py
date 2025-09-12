@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 from urllib.parse import urlparse
 
-from . import __version__
+from obsidian_capture import __version__
 
 
 def create_parser() -> argparse.ArgumentParser:
