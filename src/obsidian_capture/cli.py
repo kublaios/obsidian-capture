@@ -193,7 +193,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     # Import report functions first (needed in except blocks)
     try:
-        from .report import output_legacy_error
+        from obsidian_capture.report import output_legacy_error
     except ImportError:
         # Fallback error handling if even the report module fails
         print("Critical import error: Cannot import report module", file=sys.stderr)
@@ -223,12 +223,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     # Import core modules
     try:
-        from .capture import CaptureRequest, DryRunResult, capture_html_to_obsidian
-        from .config import create_default_config, load_config
-        from .errors import CaptureError
-        from .errors import WriteError as CaptureWriteError
-        from .naming import validate_vault_path
-        from .report import output_dry_run, output_error, output_success
+        from obsidian_capture.capture import (
+            CaptureRequest,
+            DryRunResult,
+            capture_html_to_obsidian,
+        )
+        from obsidian_capture.config import create_default_config, load_config
+        from obsidian_capture.errors import CaptureError
+        from obsidian_capture.errors import WriteError as CaptureWriteError
+        from obsidian_capture.naming import validate_vault_path
+        from obsidian_capture.report import output_dry_run, output_error, output_success
     except ImportError as e:
         output_legacy_error(
             f"Failed to import required modules: {e}",
@@ -347,7 +351,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except Exception as e:
         # Catch-all for unexpected errors
         elapsed_ms = int((time.time() - start_time) * 1000)
-        from .errors import GenericError
+        from obsidian_capture.errors import GenericError
 
         error = GenericError(f"Unexpected error: {e}")
         output_error(error, args.url_or_path, elapsed_ms, args.format)
