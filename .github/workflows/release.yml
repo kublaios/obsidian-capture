@@ -107,7 +107,21 @@ jobs:
     - name: Build binary (Windows)
       if: matrix.platform == 'windows'
       run: |
-        pyinstaller --onefile --name obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} --hidden-import obsidian_capture.capture --hidden-import obsidian_capture.config --hidden-import obsidian_capture.convert --hidden-import obsidian_capture.errors --hidden-import obsidian_capture.exclude --hidden-import obsidian_capture.extract --hidden-import obsidian_capture.fetch --hidden-import obsidian_capture.logging --hidden-import obsidian_capture.metadata --hidden-import obsidian_capture.naming --hidden-import obsidian_capture.report --hidden-import obsidian_capture.timing --hidden-import obsidian_capture.write src/obsidian_capture/cli.py
+        pyinstaller --onefile --name obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} \
+          --hidden-import obsidian_capture.capture \
+          --hidden-import obsidian_capture.config \
+          --hidden-import obsidian_capture.convert \
+          --hidden-import obsidian_capture.errors \
+          --hidden-import obsidian_capture.exclude \
+          --hidden-import obsidian_capture.extract \
+          --hidden-import obsidian_capture.fetch \
+          --hidden-import obsidian_capture.logging \
+          --hidden-import obsidian_capture.metadata \
+          --hidden-import obsidian_capture.naming \
+          --hidden-import obsidian_capture.report \
+          --hidden-import obsidian_capture.timing \
+          --hidden-import obsidian_capture.write \
+          src/obsidian_capture/cli.py
 
     - name: Test binary (Linux/macOS)
       if: matrix.platform != 'windows'
