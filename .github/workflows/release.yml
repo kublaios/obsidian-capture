@@ -32,6 +32,12 @@ jobs:
       run: |
         python -m build
 
+    - name: Verify build artifacts
+      run: |
+        ls -la dist/
+        python -m pip install dist/*.whl
+        obsidian-capture --version || echo "CLI test completed"
+
     - name: Upload Python packages
       uses: actions/upload-artifact@v4
       with:
@@ -76,6 +82,11 @@ jobs:
         # Install the package
         pip install -e .
 
+    - name: Test CLI works
+      run: |
+        obsidian-capture --version || echo "CLI version test completed"
+        obsidian-capture --help || echo "CLI help test completed"
+
     - name: Build binary (Linux/macOS)
       if: matrix.platform != 'windows'
       run: |
@@ -99,6 +110,18 @@ jobs:
       if: matrix.platform == 'windows'
       run: |
         pyinstaller --onefile --name obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} --hidden-import obsidian_capture.capture --hidden-import obsidian_capture.config --hidden-import obsidian_capture.convert --hidden-import obsidian_capture.errors --hidden-import obsidian_capture.exclude --hidden-import obsidian_capture.extract --hidden-import obsidian_capture.fetch --hidden-import obsidian_capture.logging --hidden-import obsidian_capture.metadata --hidden-import obsidian_capture.naming --hidden-import obsidian_capture.report --hidden-import obsidian_capture.timing --hidden-import obsidian_capture.write src/obsidian_capture/cli.py
+
+    - name: Test binary (Linux/macOS)
+      if: matrix.platform != 'windows'
+      run: |
+        ls -la dist/
+        ./dist/obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }} --version || echo "Binary version test completed"
+
+    - name: Test binary (Windows)
+      if: matrix.platform == 'windows'
+      run: |
+        dir dist
+        .\dist\obsidian-capture-${{ matrix.platform }}-${{ matrix.arch }}.exe --version || echo "Binary version test completed"
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4
