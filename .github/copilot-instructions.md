@@ -15,7 +15,7 @@ pip install -e .
 
 # Install development dependencies individually (due to potential network timeouts)
 pip install pytest ruff
-# Note: "pip install -e .[dev]" may fail due to network timeouts - install dev deps individually instead
+# Note: "pip install -e .[dev]" may fail due to network timeouts - install development dependencies individually instead
 ```
 
 ### Build and Test
@@ -60,7 +60,21 @@ Always test these scenarios after making changes:
 #### Scenario 1: Local HTML File Processing
 ```bash
 # Create test file (with sufficient content for extraction)
-echo '<html><head><title>Test Article</title></head><body><article><h1>Test Article Title</h1><p>This is a comprehensive test article with substantial content for testing the obsidian-capture tool. It contains multiple paragraphs to ensure it meets the minimum character requirements for content extraction.</p><p>Content with <strong>bold</strong> text and <em>italic</em> text. This article has enough content to pass the minimum character threshold of 80 characters that is required by the tool.</p><p>Additional paragraph to make sure we have plenty of content for testing all the functionality including metadata extraction, content conversion, and file creation.</p></article></body></html>' > /tmp/test.html
+cat <<EOF > /tmp/test.html
+<html>
+  <head>
+    <title>Test Article</title>
+  </head>
+  <body>
+    <article>
+      <h1>Test Article Title</h1>
+      <p>This is a comprehensive test article with substantial content for testing the obsidian-capture tool. It contains multiple paragraphs to ensure it meets the minimum character requirements for content extraction.</p>
+      <p>Content with <strong>bold</strong> text and <em>italic</em> text. This article has enough content to pass the minimum character threshold of 80 characters that is required by the tool.</p>
+      <p>Additional paragraph to make sure we have plenty of content for testing all the functionality including metadata extraction, content conversion, and file creation.</p>
+    </article>
+  </body>
+</html>
+EOF
 
 # Create test vault
 mkdir -p /tmp/test-vault
@@ -186,6 +200,7 @@ ruff format src tests
 ## Configuration
 
 ### Sample Configuration Usage
+The following is the content of `config.sample.yml`:
 ```yaml
 vault: "/path/to/vault"
 selectors:
