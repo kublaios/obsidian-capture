@@ -19,6 +19,28 @@ A command-line tool for capturing web articles and local HTML files, converting 
 
 ## Installation
 
+### Binary Releases (Recommended)
+Download pre-built binaries from the [GitHub Releases](https://github.com/kublaios/obsidian-capture/releases) page:
+
+- **Linux**: `obsidian-capture-linux-x86_64`
+- **Windows**: `obsidian-capture-windows-x86_64.exe`
+- **macOS Intel**: `obsidian-capture-macos-x86_64`
+- **macOS Apple Silicon**: `obsidian-capture-macos-arm64`
+
+Binary executables are standalone and don't require Python installation.
+
+### Python Package Install
+
+Install directly from GitHub:
+```bash
+pip install git+https://github.com/kublaios/obsidian-capture.git
+```
+
+Or install from a specific release:
+```bash
+pip install https://github.com/kublaios/obsidian-capture/releases/download/v0.3.0/obsidian_capture-0.3.0-py3-none-any.whl
+```
+
 ### Development Install
 ```bash
 # Clone the repository
